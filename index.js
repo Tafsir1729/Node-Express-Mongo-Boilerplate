@@ -16,20 +16,21 @@ try {
   {
    useNewUrlParser: true,
    useUnifiedTopology: true,
-   useCreateIndex: true,
-   useFindAndModify: false,
   },
   () => {
    console.log("Database Connected");
   }
  );
 } catch (err) {
- console.log("Database connection error: ", err);
+ console.log("Database Connection Error");
 }
 
 app.use(express.static(path.join(__dirname, "/uploads")));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+const authRoute = require("./src/routes/auth.routes");
+app.use("/auth", authRoute);
 
 var port = process.env.PORT || 5000;
 

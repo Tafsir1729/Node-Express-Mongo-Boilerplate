@@ -8,3 +8,5 @@ const response = async (res, code, status, data, message) => {
   message: message,
  });
 };
+
+module.exports = { response };
