@@ -21,7 +21,6 @@ const register = async (req, res) => {
   const oldUser = await User.findOne({
    email: email,
   });
-
   if (oldUser) {
    let msg = "There is already an user created using this email.";
    return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
@@ -38,7 +37,6 @@ const register = async (req, res) => {
    let msg = "Password length must be minimum 8 characters.";
    return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
   }
-
   let pass;
   await hash(req.body.password, 9).then((hash) => {
    pass = hash;
@@ -50,7 +48,6 @@ const register = async (req, res) => {
    userType: "admin",
    activeStatus: true,
   });
-
   if (!user) {
    return response(
     res,
@@ -73,4 +70,53 @@ const register = async (req, res) => {
  }
 };
 
-module.exports = { register };
+const login = async (req, res) => {
+ const { email, password } = req.body;
+ if (!email || !password) {
+  return response(
+   res,
+   StatusCodes.BAD_REQUEST,
+   false,
+   {},
+   "Please provide email and password"
+  );
+ }
+
+ try {
+  const user = await User.findOne({
+   email: email,
+  });
+  if (!user) {
+   let msg = "No account found.";
+   return response(res, StatusCodes.NOT_FOUND, false, {}, msg);
+  }
+
+  const passwordMatched = await compare(password, user.password);
+  if (passwordMatched) {
+   if (user.activeStatus) {
+    const token = await createToken(user);
+    if (token) {
+     return response(res, StatusCodes.OK, true, { token: token }, null);
+    }
+    let msg = "Could not login";
+    return response(res, StatusCodes.BAD_REQUEST, false, {}, msg);
+   } else {
+    let msg = "Account is not active";
+    return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
+   }
+  } else {
+   let msg = "Incorrect Password!";
+   return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
+  }
+ } catch (error) {
+  return response(
+   res,
+   StatusCodes.INTERNAL_SERVER_ERROR,
+   false,
+   {},
+   error.message
+  );
+ }
+};
+
+module.exports = { register, login };
