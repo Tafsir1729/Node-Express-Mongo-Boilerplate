@@ -157,4 +157,45 @@ const getUserDetails = async (req, res) => {
  }
 };
 
-module.exports = { createUser, getUsers, getUserDetails };
+const updateUserDetails = async (req, res) => {
+ const { name, phone, userType } = req.body;
+ const id = req.params.id;
+ let user = {};
+ if (name) {
+  user.name = name;
+ }
+ if (phone) {
+  user.phone = phone;
+ }
+ if (userType) {
+  user.userType = userType;
+ }
+
+ if (user) {
+  user.updatedAt = new Date();
+  try {
+   const newUser = await User.findByIdAndUpdate(id, user, {
+    new: true,
+   }).exec();
+   if (!newUser) {
+    let msg = "Could not update";
+    return response(res, StatusCodes.BAD_REQUEST, false, {}, msg);
+   }
+
+   return response(res, StatusCodes.ACCEPTED, true, { user: newUser }, null);
+  } catch (error) {
+   return response(
+    res,
+    StatusCodes.INTERNAL_SERVER_ERROR,
+    false,
+    {},
+    error.message
+   );
+  }
+ } else {
+  let msg = "Could not update";
+  return response(res, StatusCodes.BAD_REQUEST, false, {}, msg);
+ }
+};
+
+module.exports = { createUser, getUsers, getUserDetails, updateUserDetails };

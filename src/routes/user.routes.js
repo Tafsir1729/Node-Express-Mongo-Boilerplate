@@ -3,6 +3,7 @@ const {
  createUser,
  getUsers,
  getUserDetails,
+ updateUserDetails,
 } = require("../controllers/user.controller");
 const { isAdmin, isUser } = require("../utils/protected");
 
@@ -10,5 +11,6 @@ const router = Router();
 router.post("/create", isAdmin, createUser);
 router.get("/all", isAdmin, getUsers);
 router.get("/:id", isAdmin, isUser, getUserDetails);
+router.put("/update/:id", isAdmin, isUser, updateUserDetails);
 
 module.exports = router;
