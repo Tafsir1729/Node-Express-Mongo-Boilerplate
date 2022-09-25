@@ -71,4 +71,4 @@ const isAdmin = async (req, res, next) => {
  }
 };
 
-module.exports = { verifyToken };
+module.exports = { verifyToken, isUser, isAdmin };
