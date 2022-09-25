@@ -30,7 +30,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const authRoute = require("./src/routes/auth.routes");
+const userRoute = require("./src/routes/user.routes");
+
 app.use("/auth", authRoute);
+app.use("/user", userRoute);
+
+app.get("/", (req, res) => {
+ res.send("<div><h1>Server is Running</h1></div>");
+});
 
 var port = process.env.PORT || 5000;
 

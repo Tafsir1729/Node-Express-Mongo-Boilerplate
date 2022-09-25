@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const { verify } = require("jsonwebtoken");
 const { User } = require("../models/User.model");
 const { config } = require("./config");
+const { response } = require("./response");
 
 const verifyToken = async (token) => {
  if (!token) return;

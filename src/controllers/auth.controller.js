@@ -8,13 +8,8 @@ const { response } = require("../utils/response");
 const register = async (req, res) => {
  const { email, password } = req.body;
  if (!email || !password) {
-  return response(
-   res,
-   StatusCodes.BAD_REQUEST,
-   false,
-   {},
-   "Could not register. Please provide all necessary information"
-  );
+  let msg = "Could not register. Please provide all necessary information";
+  return response(res, StatusCodes.BAD_REQUEST, false, {}, msg);
  }
 
  try {
@@ -49,16 +44,11 @@ const register = async (req, res) => {
    activeStatus: true,
   });
   if (!user) {
-   return response(
-    res,
-    StatusCodes.FORBIDDEN,
-    false,
-    {},
-    "Could not create user."
-   );
+   let msg = "Could not register.";
+   return response(res, StatusCodes.FORBIDDEN, false, {}, msg);
   }
 
-  return response(res, StatusCodes.ACCEPTED, true, { user: user }, null);
+  return response(res, StatusCodes.CREATED, true, { user: user }, null);
  } catch (error) {
   return response(
    res,
@@ -73,13 +63,8 @@ const register = async (req, res) => {
 const login = async (req, res) => {
  const { email, password } = req.body;
  if (!email || !password) {
-  return response(
-   res,
-   StatusCodes.BAD_REQUEST,
-   false,
-   {},
-   "Please provide email and password"
-  );
+  let msg = "Please provide email and password.";
+  return response(res, StatusCodes.BAD_REQUEST, false, {}, msg);
  }
 
  try {
