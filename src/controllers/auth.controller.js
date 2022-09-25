@@ -119,4 +119,39 @@ const login = async (req, res) => {
  }
 };
 
-module.exports = { register, login };
+const reLogin = async (req, res) => {
+ const { token, data } = req.body;
+ if (!token) {
+  let msg = "No Token Found";
+  return response(res, StatusCodes.BAD_REQUEST, false, token, msg);
+ }
+
+ try {
+  const result = await verifyToken(token.split("Bearer ")[1]);
+  if (result) {
+   const user = await User.findById(result._id);
+   if (!user || !user.activeStatus) {
+    let msg = "Could not authenticate";
+    return response(res, StatusCodes.BAD_REQUEST, false, {}, msg);
+   }
+
+   const newToken = await createToken(user);
+   if (newToken) {
+    return response(res, StatusCodes.OK, true, { token: newToken, user }, null);
+   }
+  } else {
+   let msg = "Please Login Again";
+   return response(res, StatusCodes.BAD_REQUEST, false, {}, msg);
+  }
+ } catch (error) {
+  return response(
+   res,
+   StatusCodes.INTERNAL_SERVER_ERROR,
+   false,
+   {},
+   error.message
+  );
+ }
+};
+
+module.exports = { register, login, reLogin };
