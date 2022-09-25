@@ -133,4 +133,28 @@ const getUsers = async (req, res) => {
  }
 };
 
-module.exports = { createUser, getUsers };
+const getUserDetails = async (req, res) => {
+ const { id } = req.params;
+
+ try {
+  const user = await User.findById(id).select(
+   "name email phone activeStatus userType"
+  );
+  if (!user) {
+   let msg = "No user Found!";
+   return response(res, StatusCodes.NOT_FOUND, false, {}, msg);
+  }
+
+  return response(res, StatusCodes.OK, true, { user: user }, null);
+ } catch (error) {
+  return response(
+   res,
+   StatusCodes.INTERNAL_SERVER_ERROR,
+   false,
+   {},
+   error.message
+  );
+ }
+};
+
+module.exports = { createUser, getUsers, getUserDetails };
