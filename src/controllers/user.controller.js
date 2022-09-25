@@ -198,4 +198,36 @@ const updateUserDetails = async (req, res) => {
  }
 };
 
-module.exports = { createUser, getUsers, getUserDetails, updateUserDetails };
+const deleteUser = async (req, res) => {
+ const id = req.params.id;
+ if (!id) {
+  let msg = "No User Found!";
+  return response(res, StatusCodes.NOT_FOUND, false, {}, msg);
+ }
+
+ try {
+  const user = await User.findByIdAndDelete(id);
+  if (!user) {
+   let msg = "Could not delete!";
+   return response(res, StatusCodes.BAD_REQUEST, false, {}, msg);
+  }
+
+  return response(res, StatusCodes.ACCEPTED, true, { user: user }, null);
+ } catch (error) {
+  return response(
+   res,
+   StatusCodes.INTERNAL_SERVER_ERROR,
+   false,
+   {},
+   error.message
+  );
+ }
+};
+
+module.exports = {
+ createUser,
+ getUsers,
+ getUserDetails,
+ updateUserDetails,
+ deleteUser,
+};
