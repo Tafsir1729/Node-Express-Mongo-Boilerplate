@@ -62,4 +62,75 @@ const createUser = async (req, res) => {
  }
 };
 
-module.exports = { createUser };
+const getUsers = async (req, res) => {
+ const { skip, limit, activeStatus, searchKey, sortBy } = req.body;
+
+ try {
+  const usersCount = await User.countDocuments()
+   .where(
+    searchKey
+     ? {
+        $or: [
+         {
+          name: { $regex: searchKey, $options: "i" },
+         },
+         {
+          email: { $regex: searchKey, $options: "i" },
+         },
+         {
+          phone: { $regex: searchKey, $options: "i" },
+         },
+        ],
+       }
+     : null
+   )
+   .where(activeStatus !== undefined ? { activeStatus: activeStatus } : null);
+
+  const users = await User.find()
+   .select("name email phone userType activeStatus")
+   .where(
+    searchKey
+     ? {
+        $or: [
+         {
+          name: { $regex: searchKey, $options: "i" },
+         },
+         {
+          email: { $regex: searchKey, $options: "i" },
+         },
+         {
+          phone: { $regex: searchKey, $options: "i" },
+         },
+        ],
+       }
+     : null
+   )
+   .where(activeStatus !== undefined ? { activeStatus: activeStatus } : null)
+   .sort(sortBy ? { [sortBy.field]: [sortBy.order] } : { createdAt: -1 })
+   .limit(limit ? limit : null)
+   .skip(skip ? skip : null);
+
+  if (!users || users.length === 0) {
+   let msg = "No users Found";
+   return response(res, StatusCodes.NOT_FOUND, false, {}, msg);
+  }
+
+  return response(
+   res,
+   StatusCodes.OK,
+   true,
+   { usersCount: usersCount, users: users },
+   null
+  );
+ } catch (error) {
+  return response(
+   res,
+   StatusCodes.INTERNAL_SERVER_ERROR,
+   false,
+   {},
+   error.message
+  );
+ }
+};
+
+module.exports = { createUser, getUsers };
