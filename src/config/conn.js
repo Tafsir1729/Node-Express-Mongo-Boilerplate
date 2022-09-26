@@ -6,7 +6,7 @@ connect(dbConnectionString, {
  useUnifiedTopology: true,
 })
  .then(() => {
-  console.log("Database Connected");
+  console.log("Database Connected ");
  })
  .catch((e) => {
   console.log("Database Connection Error");
