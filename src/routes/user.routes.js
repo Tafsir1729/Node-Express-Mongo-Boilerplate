@@ -10,7 +10,7 @@ const { isAdmin, isUser } = require("../utils/protected");
 const { userValidation } = require("../controllers/user/user.validator");
 
 const router = Router();
-router.post("/create", isAdmin, createUser);
+router.post("/create", isAdmin, userValidation, createUser);
 router.get("/all", isAdmin, getUsers);
 router.get("/:id", isAdmin, isUser, getUserDetails);
 router.put("/update/:id", isAdmin, isUser, updateUserDetails);

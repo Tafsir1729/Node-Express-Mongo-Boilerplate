@@ -1,5 +1,6 @@
 const joi = require("joi");
 const { response } = require("../../utils/response");
+const { StatusCodes } = require("http-status-codes");
 
 const validation = joi.object({
  name: joi.string().max(100).required(),
@@ -26,7 +27,7 @@ const userValidation = async (req, res, next) => {
  const { error } = validation.validate(data);
  if (error) {
   let msg = `Error in User Data : ${error.message}`;
-  return response(res, StatusCodes.BAD_REQUEST, false, {}, msg);
+  return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
  } else {
   next();
  }

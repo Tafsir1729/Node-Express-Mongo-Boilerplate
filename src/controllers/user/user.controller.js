@@ -5,29 +5,12 @@ const { securePassword } = require("../../utils/securePassword");
 
 const createUser = async (req, res) => {
  const { name, email, password, phone, userType } = req.body;
- if (!name || !email || !password || !userType) {
-  let msg = "Please provide all information.";
-  return response(res, StatusCodes.BAD_REQUEST, false, {}, msg);
- }
-
  try {
   const oldUser = await User.findOne({
    email: email,
   });
   if (oldUser) {
    let msg = "User already exists.";
-   return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
-  }
-
-  const emailRegex =
-   /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-  if (!emailRegex.test(email)) {
-   let msg = "Invalid email address.";
-   return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
-  }
-
-  if (password.length < 8) {
-   let msg = "Password length must be minimum 8 characters.";
    return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
   }
 
