@@ -1,9 +1,10 @@
-const { hash, compare } = require("bcrypt");
+const { compare } = require("bcrypt");
 const { StatusCodes } = require("http-status-codes");
 const { User } = require("../models/User.model");
 const { createToken } = require("../utils/config");
 const { verifyToken } = require("../utils/protected");
 const { response } = require("../utils/response");
+const { securePassword } = require("../utils/securePassword");
 
 const register = async (req, res) => {
  const { email, password } = req.body;
@@ -32,14 +33,12 @@ const register = async (req, res) => {
    let msg = "Password length must be minimum 8 characters.";
    return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
   }
-  let pass;
-  await hash(req.body.password, 9).then((hash) => {
-   pass = hash;
-  });
+
+  const hashedPassword = await securePassword(req.body.password);
 
   const user = await User.create({
    email: email,
-   password: pass,
+   password: hashedPassword,
    userType: "admin",
    activeStatus: true,
   });

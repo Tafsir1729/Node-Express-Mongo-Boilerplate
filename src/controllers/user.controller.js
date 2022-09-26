@@ -1,7 +1,7 @@
-const { hash, compare } = require("bcrypt");
 const { StatusCodes } = require("http-status-codes");
 const { User } = require("../models/User.model");
 const { response } = require("../utils/response");
+const { securePassword } = require("../utils/securePassword");
 
 const createUser = async (req, res) => {
  const { name, email, password, phone, userType } = req.body;
@@ -31,16 +31,13 @@ const createUser = async (req, res) => {
    return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
   }
 
-  let pass;
-  await hash(req.body.password, 9).then((hash) => {
-   pass = hash;
-  });
+  const hashedPassword = await securePassword(req.body.password);
 
   const user = await User.create({
    email: email,
    name: name,
    phone: phone,
-   password: pass,
+   password: hashedPassword,
    userType: userType,
    activeStatus: true,
   });
