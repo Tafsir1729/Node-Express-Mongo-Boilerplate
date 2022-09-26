@@ -1,5 +1,9 @@
 const { Router } = require("express");
-const { register, login, reLogin } = require("../controllers/auth.controller");
+const {
+ register,
+ login,
+ reLogin,
+} = require("../controllers/auth/auth.controller");
 
 const router = Router();
 router.post("/register", register);

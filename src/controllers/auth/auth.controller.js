@@ -1,10 +1,10 @@
 const { compare } = require("bcrypt");
 const { StatusCodes } = require("http-status-codes");
-const { User } = require("../models/User.model");
-const { createToken } = require("../utils/config");
-const { verifyToken } = require("../utils/protected");
-const { response } = require("../utils/response");
-const { securePassword } = require("../utils/securePassword");
+const { User } = require("../../models/User.model");
+const { createToken } = require("../../utils/config");
+const { verifyToken } = require("../../utils/protected");
+const { response } = require("../../utils/response");
+const { securePassword } = require("../../utils/securePassword");
 
 const register = async (req, res) => {
  const { email, password } = req.body;

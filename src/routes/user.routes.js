@@ -5,8 +5,9 @@ const {
  getUserDetails,
  updateUserDetails,
  deleteUser,
-} = require("../controllers/user.controller");
+} = require("../controllers/user/user.controller");
 const { isAdmin, isUser } = require("../utils/protected");
+const { userValidation } = require("../controllers/user/user.validator");
 
 const router = Router();
 router.post("/create", isAdmin, createUser);

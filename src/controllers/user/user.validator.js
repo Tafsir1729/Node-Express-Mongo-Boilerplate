@@ -1,5 +1,5 @@
 const joi = require("joi");
-const { response } = require("./response");
+const { response } = require("../../utils/response");
 
 const validation = joi.object({
  name: joi.string().max(100).required(),
@@ -7,7 +7,7 @@ const validation = joi.object({
  password: joi.string().min(8).trim(true).required(),
  phone: joi
   .string()
-  .length(11)
+  .length(14)
   .pattern(/(^(\+8801|8801|01|008801))[1|3-9]{1}(\d){8}$/)
   .required(),
  userType: joi.string().valid("admin", "user").required(),
