@@ -106,6 +106,6 @@ In the development server by default, it will open at port **5000**, and in the 
 
 ## Contributors
 
-<a href="https://github.com/tafsir1729/express-rest-boilerplate/graphs/contributors">
+<a href="https://github.com/tafsir1729/Node-Express-Mongo-Boilerplate/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=tafsir1729/Node-Express-Mongo-Boilerplate" />
 </a>
