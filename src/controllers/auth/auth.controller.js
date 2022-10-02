@@ -7,11 +7,7 @@ const { response } = require("../../utils/response");
 const { securePassword } = require("../../utils/securePassword");
 
 const register = async (req, res) => {
- const { email, password } = req.body;
- if (!email || !password) {
-  let msg = "Could not register. Please provide all necessary information";
-  return response(res, StatusCodes.BAD_REQUEST, false, {}, msg);
- }
+ const { name, email, password } = req.body;
 
  try {
   const oldUser = await User.findOne({
@@ -22,24 +18,13 @@ const register = async (req, res) => {
    return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
   }
 
-  const emailRegex =
-   /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-  if (!emailRegex.test(email)) {
-   let msg = "Invalid email address.";
-   return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
-  }
-
-  if (password.length < 8) {
-   let msg = "Password length must be minimum 8 characters.";
-   return response(res, StatusCodes.NOT_ACCEPTABLE, false, {}, msg);
-  }
-
   const hashedPassword = await securePassword(req.body.password);
 
   const user = await User.create({
+   name: name,
    email: email,
    password: hashedPassword,
-   userType: "admin",
+   userType: "user",
    activeStatus: true,
   });
   if (!user) {
