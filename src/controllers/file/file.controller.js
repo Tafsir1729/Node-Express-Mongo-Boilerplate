@@ -5,6 +5,7 @@ const { BlobServiceClient } = require("@azure/storage-blob");
 const { v4: uuidv4 } = require("uuid");
 const { returnBlobUrl } = require("../../utils/blobUrlReturn");
 const { blobUrl, blobConnStr, containerName } = require("../../config/config");
+const { readFile, rm } = require("fs/promises");
 
 //File upload, update, delete in Azure blob storage
 const addFile = async (req, res) => {
@@ -164,13 +165,13 @@ const deleteFile = async (req, res) => {
    StatusCodes.INTERNAL_SERVER_ERROR,
    false,
    {},
-   error.message
+   err.message
   );
  }
 };
 //File upload, update, delete in Azure blob storage
 
-//Upload Files in Local Directory
+//File upload, delete in Local Directory
 const uploadFile = async (req, res) => {
  const { name } = req.body;
  const file = req.files ? req.files.file : false;
@@ -201,6 +202,23 @@ const uploadFile = async (req, res) => {
  }
 };
 
+const deleteFileFromLocalDir = async (req, res) => {
+ const { id } = req.params;
+ try {
+  const file = await rm(`uploads/${id}`);
+  return response(res, StatusCodes.ACCEPTED, true, [], null);
+ } catch (err) {
+  return response(
+   res,
+   StatusCodes.INTERNAL_SERVER_ERROR,
+   false,
+   {},
+   err.message
+  );
+ }
+};
+//File upload, delete in Local Directory
+
 module.exports = {
  addFile,
  getFileDetails,
@@ -208,4 +226,5 @@ module.exports = {
  updateFile,
  deleteFile,
  uploadFile,
+ deleteFileFromLocalDir,
 };
