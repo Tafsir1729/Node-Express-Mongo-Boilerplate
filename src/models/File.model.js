@@ -4,19 +4,16 @@ var FileSchema = Schema(
  {
   name: {
    type: String,
-   require: true,
+   required: true,
   },
   blobName: {
    type: String,
-   required: true,
   },
   type: {
    type: String,
-   required: true,
   },
   size: {
    type: Number,
-   required: true,
   },
  },
  { timestamps: true }
