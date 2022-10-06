@@ -170,10 +170,42 @@ const deleteFile = async (req, res) => {
 };
 //File upload, update, delete in Azure blob storage
 
+//Upload Files in Local Directory
+const uploadFile = async (req, res) => {
+ const { name } = req.body;
+ const file = req.files ? req.files.file : false;
+ if (!name || !file) {
+  let msg = "name and file are required!";
+  return response(res, StatusCodes.BAD_REQUEST, false, null, msg);
+ }
+
+ try {
+  const fileName = `${uuidv4()}${file.name}`;
+  const filePath = `${fileName}`;
+  file.mv(`uploads/${filePath}`, (err) => {
+   if (err) {
+    let msg = "Could not upload";
+    return response(res, StatusCodes.BAD_REQUEST, false, { err: err }, msg);
+   }
+   const path = filePath;
+   return response(res, StatusCodes.ACCEPTED, true, { fileName: path }, null);
+  });
+ } catch (error) {
+  return response(
+   res,
+   StatusCodes.INTERNAL_SERVER_ERROR,
+   false,
+   {},
+   error.message
+  );
+ }
+};
+
 module.exports = {
  addFile,
  getFileDetails,
  getAllFiles,
  updateFile,
  deleteFile,
+ uploadFile,
 };
