@@ -6,6 +6,7 @@ const { v4: uuidv4 } = require("uuid");
 const { returnBlobUrl } = require("../../utils/blobUrlReturn");
 const { blobUrl, blobConnStr, containerName } = require("../../config/config");
 
+//File upload, update, delete in Azure blob storage
 const addFile = async (req, res) => {
  const { name } = req.body;
  const { file } = req.files ? req.files : false;
@@ -167,6 +168,7 @@ const deleteFile = async (req, res) => {
   );
  }
 };
+//File upload, update, delete in Azure blob storage
 
 module.exports = {
  addFile,
