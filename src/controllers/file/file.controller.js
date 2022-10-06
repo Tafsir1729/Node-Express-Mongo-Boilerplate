@@ -3,6 +3,7 @@ const { StatusCodes } = require("http-status-codes");
 const { response } = require("../../utils/response");
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { v4: uuidv4 } = require("uuid");
+const { returnBlobUrl } = require("../../utils/blobUrlReturn");
 const { blobUrl, blobConnStr, containerName } = require("../../config/config");
 
 const addFile = async (req, res) => {
@@ -37,7 +38,7 @@ const addFile = async (req, res) => {
    id: fileReturn._id,
    name: name,
    size: file.size,
-   file: photoURLReturn(blobName),
+   file: returnBlobUrl(blobName),
    type: file.mimetype,
   };
   return response(res, StatusCodes.ACCEPTED, true, data, null);
