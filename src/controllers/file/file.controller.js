@@ -8,20 +8,20 @@ const { blobUrl, blobConnStr, containerName } = require("../../config/config");
 
 const addFile = async (req, res) => {
  const { name } = req.body;
- if (!name) {
-  let msg = "Name is required!";
+ const { file } = req.files ? req.files : false;
+ if (!name || !file) {
+  let msg = "name and file are required!";
   return response(res, StatusCodes.BAD_REQUEST, false, null, msg);
  }
- const blobServiceClient = BlobServiceClient.fromConnectionString(blobConnStr);
- const containerClient = blobServiceClient.getContainerClient(containerName);
- const { file } = req.files;
- const fileFormat = file.name.split(".").pop();
- const blobOptions = {
-  blobHTTPHeaders: { blobContentType: file.mimetype },
- };
- const blobName = uuidv4() + "." + fileFormat;
 
  try {
+  const blobServiceClient = BlobServiceClient.fromConnectionString(blobConnStr);
+  const containerClient = blobServiceClient.getContainerClient(containerName);
+  const fileFormat = file.name.split(".").pop();
+  const blobOptions = {
+   blobHTTPHeaders: { blobContentType: file.mimetype },
+  };
+  const blobName = uuidv4() + "." + fileFormat;
   const blockBlobClient = containerClient.getBlockBlobClient(blobName);
   const uploadBlobResponse = await blockBlobClient.upload(
    file.data,
@@ -99,4 +99,49 @@ const getAllFiles = async (req, res) => {
  }
 };
 
-module.exports = { addFile, getFileDetails, getAllFiles };
+const updateFile = async (req, res) => {
+ const { id, name } = req.body;
+ const { file } = req.files ? req.files : false;
+ if (!name || !id || !file) {
+  let msg = "name, id and file are required!";
+  return response(res, StatusCodes.BAD_REQUEST, false, null, msg);
+ }
+
+ try {
+  const blobServiceClient = BlobServiceClient.fromConnectionString(blobConnStr);
+  const containerClient = blobServiceClient.getContainerClient(containerName);
+  let data = {
+   name,
+  };
+  if (file) {
+   const fileFormat = file.name.split(".").pop();
+   const blobOptions = {
+    blobHTTPHeaders: { blobContentType: file.mimetype },
+   };
+   const blobName = uuidv4() + "." + fileFormat;
+   const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+   const uploadBlobResponse = await blockBlobClient.upload(
+    file.data,
+    file.data.length,
+    blobOptions
+   );
+   data.blobName = blobName;
+   data.type = file.mimetype;
+   data.size = file.size;
+  }
+  const fileReturn = await File.findByIdAndUpdate(id, data, {
+   new: true,
+  }).exec();
+  return response(res, StatusCodes.ACCEPTED, true, { file: fileReturn }, null);
+ } catch (err) {
+  return response(
+   res,
+   StatusCodes.INTERNAL_SERVER_ERROR,
+   false,
+   {},
+   err.message
+  );
+ }
+};
+
+module.exports = { addFile, getFileDetails, getAllFiles, updateFile };
