@@ -144,4 +144,34 @@ const updateFile = async (req, res) => {
  }
 };
 
-module.exports = { addFile, getFileDetails, getAllFiles, updateFile };
+const deleteFile = async (req, res) => {
+ const { id } = req.params;
+ if (!id) {
+  let msg = "No File Found!";
+  return response(res, StatusCodes.NOT_FOUND, false, {}, msg);
+ }
+ try {
+  const file = await File.findByIdAndDelete(id).exec();
+  if (!file) {
+   let msg = "Could not delete!";
+   return response(res, StatusCodes.BAD_REQUEST, false, [], msg);
+  }
+  return response(res, StatusCodes.ACCEPTED, true, [], null);
+ } catch (err) {
+  return response(
+   res,
+   StatusCodes.INTERNAL_SERVER_ERROR,
+   false,
+   {},
+   error.message
+  );
+ }
+};
+
+module.exports = {
+ addFile,
+ getFileDetails,
+ getAllFiles,
+ updateFile,
+ deleteFile,
+};
