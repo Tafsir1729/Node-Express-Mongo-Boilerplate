@@ -73,4 +73,30 @@ const getFileDetails = async (req, res) => {
  }
 };
 
-module.exports = { addFile, getFileDetails };
+const getAllFiles = async (req, res) => {
+ try {
+  const file = await File.find();
+  let modifiedList = [];
+  file.map((x) => {
+   let data = {
+    id: x._id,
+    name: x.name,
+    size: x.size / 1000 + " kb",
+    url: returnBlobUrl(x.blobName),
+    type: x.type ? x.type : "unknown",
+   };
+   modifiedList.push(data);
+  });
+  return response(res, StatusCodes.OK, true, modifiedList, null);
+ } catch (err) {
+  return response(
+   res,
+   StatusCodes.INTERNAL_SERVER_ERROR,
+   false,
+   {},
+   err.message
+  );
+ }
+};
+
+module.exports = { addFile, getFileDetails, getAllFiles };
