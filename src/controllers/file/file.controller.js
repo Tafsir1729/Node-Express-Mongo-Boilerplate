@@ -41,17 +41,36 @@ const addFile = async (req, res) => {
    file: returnBlobUrl(blobName),
    type: file.mimetype,
   };
-  return response(res, StatusCodes.ACCEPTED, true, data, null);
+  return response(res, StatusCodes.CREATED, true, data, null);
  } catch (err) {
-  let msg = "This file can't be uploaded!";
   return response(
    res,
    StatusCodes.INTERNAL_SERVER_ERROR,
    false,
-   err.message,
-   msg
+   {},
+   err.message
   );
  }
 };
 
-module.exports = { addFile };
+const getFileDetails = async (req, res) => {
+ const { id } = req.params;
+ try {
+  const file = await File.findById(id).select("name blobName type size");
+  if (!file) {
+   let msg = "No file found!";
+   return response(res, StatusCodes.NOT_FOUND, false, {}, msg);
+  }
+  return response(res, StatusCodes.OK, true, { file: file }, null);
+ } catch (err) {
+  return response(
+   res,
+   StatusCodes.INTERNAL_SERVER_ERROR,
+   false,
+   {},
+   err.message
+  );
+ }
+};
+
+module.exports = { addFile, getFileDetails };
