@@ -15,9 +15,11 @@ app.use(bodyParser.json());
 
 const authRoute = require("./src/routes/auth.routes");
 const userRoute = require("./src/routes/user.routes");
+const fileRoute = require("./src/routes/file.routes");
 
 app.use("/auth", authRoute);
 app.use("/user", userRoute);
+app.use("/file", fileRoute);
 
 app.get("/", (req, res) => {
  res.send("<div><h1>Server is Running</h1></div>");
